@@ -1,0 +1,12 @@
+{
+	"Hello": "Cześć",
+	"Errors": {
+		"header": "An error occurred",
+		"newAmountExceededGoal": "New amount exceeded goal",
+		"amountHigherThanGoal": "Amount is higher than goal"
+	},
+	"Success": {
+		"header": "Success",
+		"goalAdded": "Goal added"
+	}
+}

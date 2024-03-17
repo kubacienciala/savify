@@ -1,0 +1,22 @@
+export const distinctColors = [
+    "#FF5733",
+    "#FFC300",
+    "#36DBCA",
+    "#FF006E",
+    "#6B5B95",
+    "#F2D7EE",
+    "#FA9F42",
+    "#B8E994",
+    "#7EA04D",
+    "#5CDB95",
+    "#1B9CFC",
+    "#4BCFFA",
+    "#686DE0",
+    "#FDA7DF",
+    "#D980FA",
+    "#FF6348",
+    "#E5989B",
+    "#FF5733",
+    "#55E6C1",
+    "#81ECEC"
+];

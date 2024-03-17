@@ -1,0 +1,12 @@
+{
+	"Hello": "Cześć",
+	"Errors": {
+		"header": "Wystąpił błąd",
+		"newAmountExceededGoal": "Nowa kwota przekracza cel",
+		"amountHigherThanGoal": "Kwota jest wyższa niż cel"
+	},
+	"Success": {
+		"header": "Sukces",
+		"goalAdded": "Cel został dodany"
+	}
+}
