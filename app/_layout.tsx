@@ -1,58 +1,85 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { themes } from '@/constants/theme';
+import { useLocalNotifications } from '@/hooks/useLocalNotifications';
+import { useNotificationsObserver } from '@/hooks/useNotificationsObserver';
+import i18n from '@/locales/i18n';
+import AuthProvider from '@/providers/AuthProvider';
+import QueryProvider from '@/providers/QueryProvider';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import * as SystemUI from 'expo-system-ui';
+import { useEffect, useState } from 'react';
+import { I18nextProvider } from 'react-i18next';
+import { useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { useColorScheme } from '@/components/useColorScheme';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+SystemUI.setBackgroundColorAsync('black');
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
+	useNotificationsObserver();
+	const [appReady, setAppReady] = useState<boolean>(false);
+	const [loaded, error] = useFonts({
+		'Poppins-Regular': require('@/assets/fonts/Poppins-Regular.ttf'),
+		'Poppins-SemiBold': require('@/assets/fonts/Poppins-SemiBold.ttf'),
+	});
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+	useEffect(() => {
+		if (error) throw error;
+	}, [error]);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+	useEffect(() => {
+		if (loaded) {
+			setAppReady(true);
+		}
+	}, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+	if (!appReady) return null;
 
-  return <RootLayoutNav />;
+	return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+	const colorScheme = useColorScheme();
+	useLocalNotifications();
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
-  );
+	return (
+		<QueryProvider>
+			<AuthProvider>
+				<I18nextProvider i18n={i18n}>
+					<GestureHandlerRootView style={{ flex: 1 }}>
+						<BottomSheetModalProvider>
+							<ThemeProvider
+								value={colorScheme === 'dark' ? themes.dark : themes.light}>
+								<Stack>
+									<Stack.Screen name='index' options={{ headerShown: false }} />
+									<Stack.Screen
+										name='(auth)'
+										options={{ headerShown: false }}
+									/>
+									<Stack.Screen
+										name='(tabs)'
+										options={{ headerShown: false }}
+									/>
+									<Stack.Screen
+										name='onboarding'
+										options={{ headerShown: false }}
+									/>
+									<Stack.Screen
+										name='transactions/transactionForm'
+										options={{ presentation: 'modal', headerShown: false }}
+									/>
+									<Stack.Screen
+										name='goals/goalForm'
+										options={{ presentation: 'modal', headerShown: false }}
+									/>
+									<Stack.Screen name='transactions/[year_month]' options={{}} />
+								</Stack>
+							</ThemeProvider>
+						</BottomSheetModalProvider>
+					</GestureHandlerRootView>
+				</I18nextProvider>
+			</AuthProvider>
+		</QueryProvider>
+	);
 }
